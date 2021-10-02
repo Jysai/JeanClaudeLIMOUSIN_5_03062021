@@ -1,6 +1,5 @@
 const items = document.querySelector(".items");
 
-
 fetch("http://localhost:3000/api/products")
   .then((response) => response.json())
   .then((data) => {
@@ -8,15 +7,14 @@ fetch("http://localhost:3000/api/products")
       let article = document.createElement("article");
       let nameSofa = document.createElement("h3");
       let descriptionSofa = document.createElement("p");
-      let imgSofa =  document.createElement("img");
+      let imgSofa = document.createElement("img");
       let urlSofa = document.createElement("a");
-      
-      urlSofa.href = data[i]._id;
+
+      urlSofa.href = "product.html?id="+data[i]._id;
       imgSofa.src = data[i].imageUrl;
       nameSofa.innerText = data[i].name;
       descriptionSofa.innerText = data[i].description;
 
-     
       items.appendChild(urlSofa);
 
       urlSofa.appendChild(article);
@@ -24,12 +22,10 @@ fetch("http://localhost:3000/api/products")
       article.appendChild(nameSofa);
       article.appendChild(imgSofa);
       article.appendChild(descriptionSofa);
-    
-     
     }
   });
 
-// const xhr = new XMLHttpRequest();  
+// const xhr = new XMLHttpRequest();
 
 // xhr.open("GET", "http://localhost:3000/api/products");
 
