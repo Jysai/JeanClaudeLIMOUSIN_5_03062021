@@ -10,7 +10,7 @@ fetch("http://localhost:3000/api/products")
       let imgSofa = document.createElement("img");
       let urlSofa = document.createElement("a");
 
-      urlSofa.href = "product.html?id="+data[i]._id;
+      urlSofa.href = "product.html?id=" + data[i]._id;
       imgSofa.src = data[i].imageUrl;
       nameSofa.innerText = data[i].name;
       descriptionSofa.innerText = data[i].description;
