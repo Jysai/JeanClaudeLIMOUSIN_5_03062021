@@ -23,17 +23,15 @@ fetch("http://localhost:3000/api/products/" + idSofa)
     btnAddBasket.addEventListener("click", (e) => {
       
       class sofa {
-        constructor(id, color, quantity, name, image, price) {
+        constructor(id, color, quantity) {
           this.idSofa = id;
           this.colorSofa = color;
           this.quantitySofa = +quantity;
-          this.titleSofa = name;
-          this.imageSofa = image;
-          this.priceSofa = price;
+      
         }
       }
 
-      let newProduct = new sofa(idSofa, colorSofa.value, quantitySofa.value, titleSofa.textContent, imageSofa.innerHTML, priceSofa.textContent);
+      let newProduct = new sofa(idSofa, colorSofa.value, quantitySofa.value  );
       
       let alreadyPresent = false;
       let modificationProduct;
@@ -55,6 +53,7 @@ fetch("http://localhost:3000/api/products/" + idSofa)
       }
     });
   });
+
 
 // let imgSofa = document.createElement("img");
 // let titleSofaSofa = document.createElement("h1");

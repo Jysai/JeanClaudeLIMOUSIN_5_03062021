@@ -4,9 +4,7 @@ fetch("http://localhost:3000/api/products")
   .then((response) => response.json())
   .then((data) => {
     for (i = 0; i < data.length; i++) {
-      console.log(data);
-
-      let article = document.createElement("article");
+       let article = document.createElement("article");
       let nameSofa = document.createElement("h3");
       let descriptionSofa = document.createElement("p");
       let imgSofa = document.createElement("img");
@@ -24,5 +22,9 @@ fetch("http://localhost:3000/api/products")
       article.appendChild(nameSofa);
       article.appendChild(imgSofa);
       article.appendChild(descriptionSofa);
+      
     }
+ 
   });
+
+
