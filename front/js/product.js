@@ -1,81 +1,57 @@
-const imageSofa = document.querySelector(".item__img");
-const titleSofa = document.getElementById("title");
-const priceSofa = document.getElementById("price");
-const descriptionSofa = document.getElementById("description");
-const colorSofa = document.getElementById("colors");
-const quantitySofa = document.getElementById("quantity");
+const imageProduct = document.querySelector(".item__img");
+const titleProduct = document.getElementById("title");
+const priceProduct = document.getElementById("price");
+const descriptionProduct = document.getElementById("description");
+const colorProduct = document.getElementById("colors");
+const quantityProduct = document.getElementById("quantity");
 const btnAddBasket = document.getElementById("addToCart");
-
-const basket = JSON.parse(localStorage.getItem("Sofas")) || [];
+const basket = JSON.parse(localStorage.getItem("Products")) || [];
 
 let urlParams = new URLSearchParams(location.search);
-let idSofa = urlParams.get("id");
+let idProduct = urlParams.get("id");
 
-fetch("http://localhost:3000/api/products/" + idSofa)
+fetch("http://localhost:3000/api/products/" + idProduct)
   .then((response) => response.json())
   .then((data) => {
-    imageSofa.innerHTML = `<img src="${data.imageUrl}">`;
-    titleSofa.textContent = `${data.name}`;
-    priceSofa.textContent = `${data.price}`;
-    descriptionSofa.textContent = `${data.description}`;
-    colorSofa.innerHTML = data.colors.map((a) => `<option>${a}</option>`);
+    imageProduct.innerHTML = `<img src="${data.imageUrl}">`;
+    titleProduct.textContent = `${data.name}`;
+    priceProduct.textContent = `${data.price}`;
+    descriptionProduct.textContent = `${data.description}`;
+    colorProduct.innerHTML = data.colors.map((a) => `<option>${a}</option>`).reduce((acc, item) => acc + item);
+    quantityProduct.setAttribute("value", 1)
 
     btnAddBasket.addEventListener("click", (e) => {
-      
-      class sofa {
+      class Sofa {
         constructor(id, color, quantity) {
-          this.idSofa = id;
-          this.colorSofa = color;
-          this.quantitySofa = +quantity;
-      
+          this.id = id;
+          this.color = color;
+          this.quantity = +quantity;
         }
       }
 
-      let newProduct = new sofa(idSofa, colorSofa.value, quantitySofa.value  );
-      
-      let alreadyPresent = false;
+      let newProduct = new Sofa(
+        idProduct,
+        colorProduct.value,
+        quantityProduct.value
+      );
+
       let modificationProduct;
+
       for (product of basket) {
-        switch (product.colorSofa) {
-          case newProduct.colorSofa:
-            alreadyPresent = true;
+        switch (product.color + product.id) {
+          case newProduct.color + newProduct.id:
             modificationProduct = basket.indexOf(product);
         }
       }
 
-      if (alreadyPresent) {
-        basket[modificationProduct].quantitySofa =
-          basket[modificationProduct].quantitySofa + newProduct.quantitySofa;
-        localStorage.setItem("Sofas", JSON.stringify(basket));
-      } else {
+      if (modificationProduct == null) {
         basket.push(newProduct);
-        localStorage.setItem("Sofas", JSON.stringify(basket));
+        
+      } else {
+        basket[modificationProduct].quantity =
+          basket[modificationProduct].quantity + newProduct.quantity;
+          
       }
+      localStorage.setItem("Products", JSON.stringify(basket));
     });
   });
-
-
-// let imgSofa = document.createElement("img");
-// let titleSofaSofa = document.createElement("h1");
-// let priceSofaSofa = document.createElement("span");
-// let descriptionSofaSofa = document.createElement("p");
-
-// imgSofa.src = data.imageSofaUrl;
-// titleSofaSofa.innerText = data.name;
-// priceSofaSofa.innerText = data.priceSofa;
-// descriptionSofaSofa.innerText = data.descriptionSofa;
-
-// itemImg.appendChild(imgSofa);
-// titleSofa.appendChild(titleSofaSofa);
-// priceSofa.appendChild(priceSofaSofa);
-// descriptionSofa.appendChild(descriptionSofaSofa);
-
-// function addColorOption(color) {
-//   let optionProduct = document.createElement("option");
-//   optionProduct.innerText = color;
-//   option.appendChild(optionProduct);
-// }
-
-// for (i = 0; i < data.colors.length; i++) {
-//   addColorOption(data.colors[i]);
-// }
