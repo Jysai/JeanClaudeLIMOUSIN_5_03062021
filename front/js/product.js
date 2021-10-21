@@ -5,14 +5,14 @@ const descriptionProduct = document.getElementById("description");
 const colorProduct = document.getElementById("colors");
 const quantityProduct = document.getElementById("quantity");
 const btnAddBasket = document.getElementById("addToCart");
-let basket = JSON.parse(localStorage.getItem("Sofas")) || [];
-
+let basket = JSON.parse(localStorage.getItem("Sofas")) || []; //localStorage
 
 console.log(btnAddBasket);
 
 let urlParams = new URLSearchParams(location.search);
 let idProduct = urlParams.get("id");
 
+// fetch pour afficher les informations du produit concerné avec URLSearchParams
 fetch("http://localhost:3000/api/products/" + idProduct)
   .then((response) => response.json())
   .then((data) => {
@@ -42,18 +42,20 @@ fetch("http://localhost:3000/api/products/" + idProduct)
 
       let modificationProduct;
 
+      //boucle qui permet de connaitre l'id et la couleur du produit présent dans le localStorage pour modifier la quantité dans la condition ligne 56
       for (product of basket) {
-        console.log(product.color , product.id);
+        console.log(product.color, product.id);
         if (product.color == newProduct.color && product.id == newProduct.id) {
-            modificationProduct = basket.indexOf(product);
+          modificationProduct = basket.indexOf(product);
         }
       }
-     
+
+      //Condition pour push le produit dans le localStorage, si déjà présent dans le localStorage on modifie seulement la quantité
       if (modificationProduct == null) {
         basket.push(newProduct);
       } else {
         basket[modificationProduct].quantity =
-        basket[modificationProduct].quantity + newProduct.quantity;
+          basket[modificationProduct].quantity + newProduct.quantity;
       }
       localStorage.setItem("Sofas", JSON.stringify(basket));
     });
