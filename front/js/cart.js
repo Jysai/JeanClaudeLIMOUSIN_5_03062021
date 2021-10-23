@@ -13,7 +13,7 @@ function onChangeClick(id, color) {
   for (const product of basket) {
     if (product.color == color && product.id == id) {
       modificationProduct = basket.indexOf(product);
-      console.log(modificationProduct);
+      
     }
   }
   basket[modificationProduct].quantity = +input.value;
@@ -26,7 +26,7 @@ function onClickDelete(id, color) {
   for (const product of basket) {
     if (product.color == color && product.id == id) {
       modificationProduct = basket.indexOf(product);
-      console.log(modificationProduct);
+      
     }
   }
 
@@ -35,6 +35,38 @@ function onClickDelete(id, color) {
   localStorage.setItem("Sofas", JSON.stringify(basket));
   window.location.reload();
 }
+
+// Permet d'additioner la quantité total des produits
+function totalQuantityBasket() {
+  let arrayQ = [];
+  for (const product of basket) {
+    let itemQuant = product.quantity;
+    arrayQ.push(itemQuant);
+    totalQuantity.textContent = arrayQ.reduce(
+      (accumulator, curr) => accumulator + curr
+    );
+  }
+}
+totalQuantityBasket();
+
+// Le total du panier
+function totalPriceBasket() {
+  const arrayP = [];
+  for (let i = 0; i < basket.length; i++) {
+    fetch("http://localhost:3000/api/products/" + basket[i].id)
+      .then((response) => response.json())
+      .then((data) => {
+        const totalPriceBasket = data.price * basket[i].quantity;
+
+        arrayP.push(totalPriceBasket);
+
+        totalPrice.textContent = arrayP.reduce(
+          (accumulator, curr) => accumulator + curr
+        );
+      });
+  }
+}
+totalPriceBasket();
 
 // Boucle qui permet de récuperer les informations dans le localstorage puis affiche un récapitulatif dans la page Panier
 if (basket === null) {
@@ -83,28 +115,135 @@ if (basket === null) {
   }
 }
 
-// Permet d'additioner la quantité total des produits dans le panier sous forme d'un tableau avec la méthode reduce()
-let arrayQ = [];
-for (const product of basket) {
-  let itemQuant = product.quantity;
-  arrayQ.push(itemQuant);
-}
-totalQuantity.textContent = arrayQ.reduce(
-  (accumulator, curr) => accumulator + curr
-);
 
-// Le total du panier
-const arrayP = [];
-for (let i = 0; i < basket.length; i++) {
-  fetch("http://localhost:3000/api/products/" + basket[i].id)
+
+//------------------------------//
+
+
+const order = document.getElementById("order");
+
+function firstAndLastName(data) {
+  let letters =
+    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+  if (letters.test(data)) {
+    return true;
+  }
+  return false;
+}
+
+function postalAdress(data) {
+  let letters = /^([0-9]*)?([a-zA-Z, \.]*)?([0-9]{5})?([a-zA-Z]*)+$/;
+  if (letters.test(data)) {
+    return true;
+  }
+  return false;
+}
+
+function validateEmail(data) {
+  let testData = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (testData.test(data)) {
+    return true;
+  }
+  return false;
+}
+
+document.getElementById("lastName").onblur = function () {
+  let status = document.getElementById("lastName").value;
+  if (status.length <= 0) {
+    document.getElementById("lastNameErrorMsg").innerHTML =
+      "Le champ Nom est vide!";
+  } else if (!firstAndLastName(status)) {
+    document.getElementById("lastNameErrorMsg").innerHTML =
+      "Caractères invalides!";
+  } else {
+    document.getElementById("lastNameErrorMsg").innerHTML = "";
+  }
+};
+
+document.getElementById("firstName").onblur = function () {
+  let status = document.getElementById("firstName").value;
+  if (status.length <= 0) {
+    document.getElementById("firstNameErrorMsg").innerHTML =
+      "Le champ Prénom est vide!";
+  } else if (!firstAndLastName(status)) {
+    document.getElementById("firstNameErrorMsg").innerHTML =
+      "Caractères invalides!";
+  } else {
+    document.getElementById("firstNameErrorMsg").innerHTML = "";
+  }
+};
+
+document.getElementById("address").onblur = function () {
+  let status = document.getElementById("address").value;
+  if (status.length <= 0) {
+    document.getElementById("addressErrorMsg").innerHTML =
+      "Le champ Adresse est vide!";
+  } else if (!postalAdress(status)) {
+    document.getElementById("addressErrorMsg").innerHTML =
+      "Caractères invalides!";
+  } else {
+    document.getElementById("addressErrorMsg").innerHTML = "";
+  }
+};
+
+document.getElementById("city").onblur = function () {
+  let status = document.getElementById("city").value;
+  if (status.length <= 0) {
+    document.getElementById("cityErrorMsg").innerHTML =
+      "Le champ Ville est vide!";
+  } else if (!postalAdress(status)) {
+    document.getElementById("cityErrorMsg").innerHTML =
+      "Caractères invalides!";
+  } else {
+    document.getElementById("cityErrorMsg").innerHTML = "";
+  }
+};
+
+document.getElementById("email").onblur = function () {
+  let status = document.getElementById("email").value;
+  if (status.length <= 0) {
+    document.getElementById("emailErrorMsg").innerHTML =
+      "Le champ Email est vide!";
+  } else if (!validateEmail(status)) {
+    document.getElementById("emailErrorMsg").innerHTML =
+      "Adresse e-mail invalide!";
+  } else {
+    document.getElementById("emailErrorMsg").innerHTML = "";
+  }
+};
+
+
+order.addEventListener("click", () => {
+  let contact = {
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
+    email: document.getElementById("email").value,
+  };
+  const products = [];
+  for (let product of basket) {
+    products.push(product.id);
+  }
+
+  fetch("http://localhost:3000/api/products/order/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contact, products }),
+
+  })
     .then((response) => response.json())
     .then((data) => {
-      const totalPriceBasket = basket.reduce(() => {
-        return data.price * basket[i].quantity;
-      }, 0);
-      arrayP.push(totalPriceBasket);
-      totalPrice.textContent = arrayP.reduce(
-        (accumulator, curr) => accumulator + curr
-      );
-    });
-}
+      localStorage.setItem("Contact", JSON.stringify(data.contact));
+      localStorage.setItem("Produits", JSON.stringify(data.products));
+      window.location = `confirmation.html?orderId=${data.orderId}`;
+      
+    })
+    .then(() => {
+        
+    })
+});
+
+
+
+

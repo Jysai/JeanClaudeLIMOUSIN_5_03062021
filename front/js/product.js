@@ -7,10 +7,11 @@ const quantityProduct = document.getElementById("quantity");
 const btnAddBasket = document.getElementById("addToCart");
 let basket = JSON.parse(localStorage.getItem("Sofas")) || []; //localStorage
 
-console.log(btnAddBasket);
+
 
 let urlParams = new URLSearchParams(location.search);
 let idProduct = urlParams.get("id");
+console.log(idProduct);
 
 // fetch pour afficher les informations du produit concerné avec URLSearchParams
 fetch("http://localhost:3000/api/products/" + idProduct)
