@@ -7,8 +7,6 @@ const quantityProduct = document.getElementById("quantity");
 const btnAddBasket = document.getElementById("addToCart");
 let basket = JSON.parse(localStorage.getItem("Sofas")) || []; //localStorage
 
-
-
 let urlParams = new URLSearchParams(location.search);
 let idProduct = urlParams.get("id");
 console.log(idProduct);
@@ -41,22 +39,22 @@ fetch("http://localhost:3000/api/products/" + idProduct)
         quantityProduct.value
       );
 
-      let modificationProduct;
+      let productIndex;
 
       //boucle qui permet de connaitre l'id et la couleur du produit présent dans le localStorage pour modifier la quantité dans la condition ligne 56
       for (product of basket) {
         console.log(product.color, product.id);
         if (product.color == newProduct.color && product.id == newProduct.id) {
-          modificationProduct = basket.indexOf(product);
+          productIndex = basket.indexOf(product);
         }
       }
 
       //Condition pour push le produit dans le localStorage, si déjà présent dans le localStorage on modifie seulement la quantité
-      if (modificationProduct == null) {
+      if (productIndex == null) {
         basket.push(newProduct);
       } else {
-        basket[modificationProduct].quantity =
-          basket[modificationProduct].quantity + newProduct.quantity;
+        basket[productIndex].quantity =
+          basket[productIndex].quantity + newProduct.quantity;
       }
       localStorage.setItem("Sofas", JSON.stringify(basket));
     });

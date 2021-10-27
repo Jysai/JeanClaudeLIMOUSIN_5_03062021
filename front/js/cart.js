@@ -2,16 +2,22 @@ const cartItems = document.getElementById("cart__items");
 let basket = JSON.parse(localStorage.getItem("Sofas")); //localStorage
 const totalQuantity = document.getElementById("totalQuantity");
 const totalPrice = document.getElementById("totalPrice");
-const orderIdID = document.getElementById("orderId");
+const orderId = document.getElementById("orderId");
 
 let urlParams = new URLSearchParams(location.search);
 let idProduct = urlParams.get("orderId");
 
-function orderNumber() {
-  orderIdID.textContent = idProduct;
+function addOrderNumber() {
+  orderId.textContent = idProduct;
 }
 
-// Fonction pour changer la quantité d'un produit dans le panier
+function getArticleHTML(id, color) {
+  return  document.querySelector(
+    `article[data-color="${color}"][data-id="${id}"]`
+  );
+}
+
+// Permet de changer la quantité d'un produit dans le panier
 function onChangeClick(id, color) {
   const article = document.querySelector(
     `article[data-color="${color}"][data-id="${id}"]`
@@ -25,64 +31,67 @@ function onChangeClick(id, color) {
   }
   basket[modificationProduct].quantity = +input.value;
   localStorage.setItem("Sofas", JSON.stringify(basket));
-  window.location.reload();
+  attachTotalQuantityBasket();
+  attachTotalPriceBasket()
 }
 
-// Fonction pour supprimer un produit dans le panier
+// Permet de supprimer un produit du panier
 function onClickDelete(id, color) {
   for (const product of basket) {
     if (product.color == color && product.id == id) {
       modificationProduct = basket.indexOf(product);
     }
   }
-
+  getArticleHTML(id, color).remove()
   basket.splice(modificationProduct, 1);
 
+
   localStorage.setItem("Sofas", JSON.stringify(basket));
-  window.location.reload();
+  attachTotalQuantityBasket();
 }
 
-if (orderIdID) {
-  orderNumber();
+if (orderId) {
+  addOrderNumber();
 } else {
-  totalQuantityBasket();
-  totalPriceBasket();
-  basketFill();
+  attachTotalQuantityBasket();
+  attachTotalPriceBasket();
+  addBasketFill();
   checkFields();
-  orderBasket();
+  sendOrderBasket();
 }
 
-// Permet d'additioner la quantité total des produits
-function totalQuantityBasket() {
-  let arrayQ = [];
+// Permet d'additionner la quantité total des produits
+function attachTotalQuantityBasket() {
+  let arrayQuantitys = [];
   for (const product of basket) {
-    let itemQuant = product.quantity;
-    arrayQ.push(itemQuant);
-    totalQuantity.textContent = arrayQ.reduce(
-      (accumulator, curr) => accumulator + curr
+    let itemQuantity = product.quantity;
+    arrayQuantitys.push(itemQuantity);
+    totalQuantity.textContent = arrayQuantitys.reduce(
+      (previousValue, currentValue) => previousValue + currentValue
     );
-  }
+  } 
 }
 
 // Le total du panier
-function totalPriceBasket() {
-  const arrayP = [];
+function attachTotalPriceBasket() {
+  const arrayPrices = [];
   for (let i = 0; i < basket.length; i++) {
     fetch("http://localhost:3000/api/products/" + basket[i].id)
       .then((response) => response.json())
       .then((data) => {
         const totalPriceBasket = data.price * basket[i].quantity;
 
-        arrayP.push(totalPriceBasket);
+        arrayPrices.push(totalPriceBasket);
 
-        totalPrice.textContent = arrayP.reduce(
-          (accumulator, curr) => accumulator + curr
+        totalPrice.textContent = arrayPrices.reduce(
+          (previousValue, currentValue) => previousValue + currentValue
         );
       });
   }
+  
 }
 
-function basketFill() {
+function addBasketFill() {
   // Boucle qui permet de récuperer les informations dans le localstorage puis affiche un récapitulatif dans la page Panier
   if (basket === null) {
     cartItems.innerHTML = `
@@ -106,7 +115,7 @@ function basketFill() {
           <div class="cart__item__content">
             <div class="cart__item__content__titlePrice">
               <h2>${data.name}</h2>
-              <p >${data.price * basket[i].quantity}€</p>
+              <p >${data.price}€</p>
             </div>
             <div class="cart__item__content__settings">
               <p>Couleur : ${basket[i].color}</p>
@@ -224,12 +233,10 @@ function checkFields() {
     } else {
       document.getElementById("emailErrorMsg").innerHTML = "";
     }
-  };
+  }; 
 }
 
-
-
-function orderBasket() {
+function sendOrderBasket() {
   order.addEventListener("click", () => {
     let contact = {
       firstName: document.getElementById("firstName").value,
@@ -242,6 +249,8 @@ function orderBasket() {
     for (let product of basket) {
       products.push(product.id);
     }
+
+
 
     fetch("http://localhost:3000/api/products/order/", {
       method: "POST",
