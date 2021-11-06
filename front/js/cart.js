@@ -70,7 +70,7 @@ if (orderId) {
   addBasketFill();
   attachTotalQuantityBasket();
   attachTotalPriceBasket();
-  // checkFields();
+  formValidation();
   sendOrderBasket();
 }
 
@@ -150,54 +150,12 @@ function addBasketFill() {
 }
 
 //------------------------------//
+function formValidation() {
+  let tick = true;
 
-  document.getElementById("order").onclick = function actionForm() {
-    const firstName = document.getElementById("firstName");
-    const lastname = document.getElementById("lastName");
-    const address = document.getElementById("address");
-    const city = document.getElementById("city");
-    const email = document.getElementById("email");
-    if (firstName.value == "") {
-      document.getElementById("firstNameErrorMsg").textContent =
-        "Le prénom est requis";
-      document.getElementById("firstName").style.border = "1px solid red";
-    }
-
-    if (lastname.value == "") {
-      document.getElementById("lastNameErrorMsg").textContent =
-        "Le nom est requis";
-      document.getElementById("lastName").style.border = "1px solid red";
-    }
-
-    if (address.value == "") {
-      document.getElementById("addressErrorMsg").textContent =
-        "L'adresse est requise";
-      document.getElementById("address").style.border = "1px solid red";
-    }
-
-    if (city.value == "") {
-      document.getElementById("cityErrorMsg").textContent =
-        "La ville est requise";
-      document.getElementById("city").style.border = "1px solid red";
-    }
-
-    if (email.value == "") {
-      document.getElementById("emailErrorMsg").textContent =
-        "L'email est requis";
-      document.getElementById("email").style.border = "1px solid red";
-    }
-    
-  };
-
-
-
-function formValidation(oEvent) {
-  oEvent = oEvent || window.event;
-
-  let t1ck = true;
-
+  //Verifie le champs Prénom
   if (document.getElementById("firstName").value.length == 0) {
-    t1ck = false;
+    tick = false;
     document.getElementById("firstNameErrorMsg").innerHTML =
       "Le prénom est requis";
     document.getElementById("firstName").style.border = "1px solid red";
@@ -208,7 +166,7 @@ function formValidation(oEvent) {
         /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
       )
   ) {
-    t1ck = false;
+    tick = false;
     document.getElementById("firstNameErrorMsg").innerHTML =
       "Le prénom ne doit pas comporter de chiffres ni de caractères spéciaux";
     document.getElementById("firstName").style.border = "1px solid red";
@@ -217,8 +175,9 @@ function formValidation(oEvent) {
     document.getElementById("firstName").style.border = "1px solid green";
   }
 
+  //Verifie le champs Nom
   if (document.getElementById("lastName").value.length == 0) {
-    t1ck = false;
+    tick = false;
     document.getElementById("lastNameErrorMsg").innerHTML = "Le nom est requis";
     document.getElementById("lastName").style.border = "1px solid red";
   } else if (
@@ -228,7 +187,7 @@ function formValidation(oEvent) {
         /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
       )
   ) {
-    t1ck = false;
+    tick = false;
     document.getElementById("lastNameErrorMsg").innerHTML =
       "Le prénom ne doit pas comporter de chiffres ni de caractères spéciaux";
     document.getElementById("lastName").style.border = "1px solid red";
@@ -237,8 +196,9 @@ function formValidation(oEvent) {
     document.getElementById("lastName").style.border = "1px solid green";
   }
 
+  //Verifie le champs Adresse
   if (document.getElementById("address").value.length == 0) {
-    t1ck = false;
+    tick = false;
     document.getElementById("addressErrorMsg").innerHTML =
       "L'adresse est requise";
     document.getElementById("address").style.border = "1px solid red";
@@ -247,7 +207,7 @@ function formValidation(oEvent) {
       .getElementById("address")
       .value.match(/^([0-9]*)?([a-zA-Z, \.]*)?([0-9]{5})?([a-zA-Z]*)+$/)
   ) {
-    t1ck = false;
+    tick = false;
     document.getElementById("addressErrorMsg").innerHTML =
       "L'adresse ne doit pas comporter de caractères spéciaux";
     document.getElementById("address").style.border = "1px solid red";
@@ -256,8 +216,9 @@ function formValidation(oEvent) {
     document.getElementById("address").style.border = "1px solid green";
   }
 
+  //Verifie le champs Ville
   if (document.getElementById("city").value.length == 0) {
-    t1ck = false;
+    tick = false;
     document.getElementById("cityErrorMsg").innerHTML = "La ville est requise";
     document.getElementById("city").style.border = "1px solid red";
   } else if (
@@ -265,7 +226,7 @@ function formValidation(oEvent) {
       .getElementById("city")
       .value.match(/^([0-9]*)?([a-zA-Z, \.]*)?([0-9]{5})?([a-zA-Z]*)+$/)
   ) {
-    t1ck = false;
+    tick = false;
     document.getElementById("cityErrorMsg").innerHTML =
       "La ville ne doit pas comporter de caractères spéciaux";
     document.getElementById("city").style.border = "1px solid red";
@@ -274,8 +235,9 @@ function formValidation(oEvent) {
     document.getElementById("city").style.border = "1px solid green";
   }
 
+  //Verifie le champs Email
   if (document.getElementById("email").value.length == 0) {
-    t1ck = false;
+    tick = false;
     document.getElementById("emailErrorMsg").innerHTML = "L'email est requis";
     document.getElementById("email").style.border = "1px solid red";
   } else if (
@@ -286,40 +248,22 @@ function formValidation(oEvent) {
     document.getElementById("emailErrorMsg").innerHTML =
       "Format de l'email non autorisé";
     document.getElementById("email").style.border = "1px solid red";
-    t1ck = false;
+    tick = false;
   } else {
     document.getElementById("emailErrorMsg").innerHTML = "";
     document.getElementById("email").style.border = "1px solid green";
   }
 
-  if (t1ck) {
-    // document.getElementById("order").style.display = "block";
+  //Permet de débloquer le bouton Commander si tous les champs sont valides
+  if (tick) {
     document.getElementById("order").disabled = false;
   } else {
-    // document.getElementById("order").style.display = "none";
     document.getElementById("order").disabled = true;
   }
 
   
-
 }
-
-window.onload = function () {
-  let firstName = document.getElementById("firstName");
-  let lastName = document.getElementById("lastName");
-  let address = document.getElementById("address");
-  let email = document.getElementById("email");
-  let city = document.getElementById("city");
-
-  // document.getElementById("order").style.display = "none";
-  document.getElementById("order").disabled = true;
-
-  firstName.onkeyup = formValidation;
-  lastName.onkeyup = formValidation;
-  address.onkeyup = formValidation;
-  email.onkeyup = formValidation;
-  city.onkeyup = formValidation;
-};
+onkeyup = formValidation;
 
 function sendOrderBasket() {
   order.addEventListener("click", (event) => {
@@ -343,7 +287,7 @@ function sendOrderBasket() {
     })
       .then((response) => response.json())
       .then((data) => {
-        localStorage.clear()
+        localStorage.clear();
         localStorage.setItem("Contact", JSON.stringify(data.contact));
         localStorage.setItem("Produits", JSON.stringify(data.products));
 
